@@ -10,15 +10,15 @@ def convert_date(mongo_date_obj):
     except (TypeError, KeyError):
         return None
 
-input_file = 'fetch_data/users.json'          # Your source JSON file
+input_file = 'fetch_data/users.json'          # original file
 output_file = 'clean_json/users_clean.csv'     # Output CSV file
 
-# Define CSV header matching your table columns
+# Define CSV header with column names 
 header = [
     "_id", 
     "active", 
-    "createddate",   # Will store the converted "createdDate"
-    "lastlogin",     # Will store the converted "lastLogin"
+    "createddate",   
+    "lastlogin",     
     "role", 
     "signupsource", 
     "state"
@@ -37,7 +37,7 @@ with open(input_file, 'r') as infile, open(output_file, 'w', newline='') as outf
         created_date = convert_date(data.get("createdDate"))
         last_login = convert_date(data.get("lastLogin"))
         role = data.get("role")
-        # Match the JSON key "signUpSource" but store it as "signupsource" in CSV
+        
         signup_source = data.get("signUpSource")
         state = data.get("state")
 

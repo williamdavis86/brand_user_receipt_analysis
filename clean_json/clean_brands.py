@@ -6,16 +6,15 @@ brands_output = 'clean_json/brands_clean.csv'
 categories_output = 'clean_json/brandcategories_clean.csv'
 cpg_output = 'clean_json/cpg_clean.csv'
 
-# Use dictionaries to help deduplicate categories and cpg records
 categories = {}  # key: categorycode, value: category
 cpgs = {}        # key: cpgid, value: ref
 
-# Prepare the CSV for the brands table
+# CSV for rands table
 with open(input_file, 'r') as infile, \
      open(brands_output, 'w', newline='') as b_out:
     
     brands_writer = csv.writer(b_out)
-    # Define header for brands table
+    # Define CSV header with column names 
     brands_header = [
         "_id", 
         "barcode", 
@@ -27,21 +26,19 @@ with open(input_file, 'r') as infile, \
     ]
     brands_writer.writerow(brands_header)
     
-    # Process each line (each JSON record) in brands.json
+    # go through each line in brands.json
     for line in infile:
         data = json.loads(line)
         
-        # Extract the fields for tb_brands
         brand_id = data["_id"]["$oid"]
         barcode = data.get("barcode")
-        # Use "brandCode" if available; sometimes it might be missing
+        # account for missing data
         brandcode = data.get("brandCode", "")
         categorycode = data.get("categoryCode", "")
-        # For some records, "topBrand" might be missing (default to False)
         topbrand = data.get("topBrand", False)
         brandname = data.get("name")
         
-        # Extract CPG info from the nested object if available
+        # get cpg from json object
         cpg_data = data.get("cpg", {})
         cpgid = ""
         cpgref = ""
@@ -70,7 +67,7 @@ with open(input_file, 'r') as infile, \
         if cpgid:
             cpgs[cpgid] = cpgref
 
-# Write the categories CSV (for tb_brandcategories)
+# fill in categories CSV 
 with open(categories_output, 'w', newline='') as cat_out:
     cat_writer = csv.writer(cat_out)
     cat_header = ["categorycode", "category"]
@@ -79,7 +76,7 @@ with open(categories_output, 'w', newline='') as cat_out:
     for cat_code, cat_name in categories.items():
         cat_writer.writerow([cat_code, cat_name])
 
-# Write the CPG CSV (for tb_cpg)
+#fill in CPG CSV 
 with open(cpg_output, 'w', newline='') as cpg_out:
     cpg_writer = csv.writer(cpg_out)
     cpg_header = ["_id", "ref"]

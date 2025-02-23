@@ -3,17 +3,16 @@ import csv
 from datetime import datetime
 
 def convert_date(mongo_date_obj):
-    # Expects a dict like {"$date": 1609687531000}
     try:
         # Convert from milliseconds to seconds, then format as YYYY-MM-DD
         return datetime.utcfromtimestamp(mongo_date_obj["$date"] / 1000).strftime('%Y-%m-%d')
     except (TypeError, KeyError):
         return None
 
-input_file = 'fetch_data/receipts.json'          # Your source JSON file
+input_file = 'fetch_data/receipts.json'          # original file
 output_file = 'clean_json/receipts_clean.csv'     # Output CSV file
 
-# Define CSV header matching your table column names
+# Define CSV header with column names 
 header = [
     "_id", 
     "bonuspointsearned", 
@@ -50,7 +49,7 @@ with open(input_file, 'r') as infile, open(output_file, 'w', newline='') as outf
             data.get("pointsEarned"),
             convert_date(data.get("purchaseDate")) if data.get("purchaseDate") else None,
             data.get("purchasedItemCount"),
-            json.dumps(data.get("rewardsReceiptItemList")),  # Keep as JSON string for jsonb column
+            json.dumps(data.get("rewardsReceiptItemList")),  # json column 
             data.get("rewardsReceiptStatus"),
             data.get("totalSpent"),
             data.get("userId")

@@ -139,6 +139,7 @@ LATERAL jsonb_array_elements(
 -- select * from receipts.tb_receipt_items
 
 -- Which brand has the most spend among users who were created within the past 6 months?
+-- for this excersise, since it is old data, I did within 6 months of the most recent createddate
 with receipts as (
 SELECT 
   _id, 
@@ -169,6 +170,13 @@ distinct_users_last_6_months u on r.userid  = u._id
 group by r.brandcode 
 order by ts desc 
 limit 1 
+
+/*
+ brandcode|ts      |
+---------+--------+
+PEPSI    |78870.86| 
+ 
+ */
 
 -- Which brand has the most transactions among users who were created within the past 6 months?
 with receipts as (
@@ -202,7 +210,13 @@ group by r.brandcode
 order by total_transactions desc 
 limit 1 
 
--- When considering total number of items purchased from receipts with 'rewardsReceiptStatus’ of ‘Accepted’ or ‘Rejected’, which is greater?
+/*
+brandcode|total_transactions|
+---------+------------------+
+PEPSI    |                16|
+*/
+
+-- When considering total number of items purchased from receipts with 'rewardsReceiptStatus’ of ‘Accepted’ (I used Finished since accepted was not present in the data) or ‘Rejected’, which is greater?
 
 with receipts_and_items as (
 select r._id, r.rewardsreceiptstatus
@@ -217,6 +231,12 @@ rewardsreceiptstatus, count(_id)
 from receipts_and_items
 group by rewardsreceiptstatus
 
-
+/*
+ rewardsreceiptstatus|count|
+--------------------+-----+
+REJECTED            |  111|
+FINISHED            | 5555| 
+ 
+ */
 
 
